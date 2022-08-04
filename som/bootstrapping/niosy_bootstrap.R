@@ -19,8 +19,6 @@ neutBootTA <- bootstrapMap(
   options = list()
 )
 
-# save.acmap(neutBootTA, "./som/bootstrapping/neutBootTA.ace")
-
 # Titer noise
 neutBootT <- bootstrapMap(
   neut,
@@ -34,8 +32,6 @@ neutBootT <- bootstrapMap(
   titer_noise_sd = 0.7,
   options = list()
 )
-
-# save.acmap(neutBootT, "./som/bootstrapping/neutBootT.ace")
 
 # Antigen noise
 neutBootA <- bootstrapMap(
@@ -51,14 +47,9 @@ neutBootA <- bootstrapMap(
   options = list()
 )
 
-# save.acmap(neutBootA, "./som/bootstrapping/neutBootA.ace")
-
 # do the blobs
-# neutBootTA <- read.acmap("./som/bootstrapping/neutBootTA.ace")
 neutBootTABlobs <- bootstrapBlobs(neutBootTA, conf.level = 0.68, smoothing = 4, gridspacing = 0.05)
-# neutBootT<- read.acmap("./som/bootstrapping/neutBootT.ace")
 neutBootTBlobs <- bootstrapBlobs(neutBootT, conf.level = 0.68, smoothing = 4, gridspacing = 0.05)
-# neatBootA <- read.acmap("./som/bootstrapping/neutBootA.ace")
 neutBootABlobs <- bootstrapBlobs(neutBootA, conf.level = 0.68, smoothing = 4, gridspacing = 0.05)
 
 

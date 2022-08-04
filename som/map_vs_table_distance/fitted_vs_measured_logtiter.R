@@ -1,8 +1,8 @@
-
 rm(list = ls())
 library(Racmacs)
 library(tidyverse)
 library(ggplot2)
+library(patchwork)
 
 map <- read.acmap("./data/maps/map-OmicronI+II+III-thresholded-single_exposure-P1m1.ace")
 
@@ -38,7 +38,7 @@ plot_map_vs_table_dist <- function(map) {
     
     theme_bw()-> p
   
- return(p)
+  return(p)
 }
 
 plot_map_vs_table_titers <- function(map) {
@@ -55,6 +55,8 @@ plot_map_vs_table_titers <- function(map) {
     sr <- "BA.2 omicron conv."
   } else if(unique(as.character(srGroups(map))) == "alpha/alpha+E484K conv."){
     sr <- "alpha conv."
+  } else if(unique(as.character(srGroups(map))) == "BA.5 conv."){
+    sr <- "BA.5 omicron conv."
   }  else {
     sr <- unique(as.character(srGroups(map)))
   }
@@ -121,9 +123,9 @@ plot_residual_titers <- function(map) {
     geom_text(mapping = aes(x = 4, y = 15, hjust =1, label = paste('mu', "==", m)), parse = TRUE, color = "black", size = 3) +
     geom_text(mapping = aes(x = 4, y = 14, hjust =1, label = paste('sigma', "==", sd)), parse = TRUE, color = "black", size = 3) +
     theme(legend.position = "none",
-         axis.title = element_text(size = 8),
-         
-         ) -> p
+          axis.title = element_text(size = 8),
+          
+    ) -> p
   
   return(p)
 } 
@@ -134,21 +136,20 @@ titer_difference_hist <- list()
 titers_plots <- list()
 
 for(sr in c( "mRNA1273/mRNA1273", "AZ/AZ","AZ/BNT","BNT/BNT","WT conv.", "alpha/alpha+E484K conv.", "beta conv.", "delta conv.", "BA.1 conv.","BA.2 conv.")) {
-   
+  
   map_vs_table_plots[[sr]] <- plot_map_vs_table_dist(subsetMap(map, sera = srNames(map)[as.character(srGroups(map)) == sr]))
   titers_plots[[sr]] <- plot_map_vs_table_titers(subsetMap(map, sera = srNames(map)[as.character(srGroups(map)) == sr]))
   difference_hist[[sr]] <- plot_residual_distance(subsetMap(map, sera = srNames(map)[as.character(srGroups(map)) == sr]))
   titer_difference_hist[[sr]] <- plot_residual_titers(subsetMap(map, sera = srNames(map)[as.character(srGroups(map)) == sr]))
 }
 
-ggpubr::ggarrange(plotlist = titers_plots[1:5], labels = c("A", "B", "C", "D", "E"), nrow = 1) -> titers_top
-ggpubr::ggarrange(plotlist = titer_difference_hist[1:5],labels = rep(" ", 5), nrow = 1) -> titers_res_top
 
-ggpubr::ggarrange(plotlist = titers_plots[6:10], labels = c("F", "G", "H","I", "J"), nrow = 1) -> titers_bottom
+ggpubr::ggarrange(plotlist = titers_plots[1:5], labels = c("A", "B", "C", "D", "E"), nrow = 1) -> titers_top
+ggpubr::ggarrange(plotlist = titer_difference_hist[1:5],labels = rep(" ",5), nrow = 1) -> titers_res_top
+
+ggpubr::ggarrange(plotlist = titers_plots[6:10], labels = c("F", "G", "H","I", "J", "K"), nrow = 1) -> titers_bottom
 ggpubr::ggarrange(plotlist = titer_difference_hist[6:10],labels = rep(" ", 5), nrow = 1) -> titers_res_bottom
 
-
 ggpubr::ggarrange(titers_top, titers_res_top, titers_bottom, titers_res_bottom, nrow = 4) -> combo
-
-ggsave(filename = "som/map_vs_table_distance/map_vs_table_titer_plot.png", plot = combo, width=11, height=10, dpi = 300)
+ggsave(filename = "som/map_vs_table_distance/map_vs_table_titer_plot.png", plot = combo, width=10, height=10, dpi = 300)
 

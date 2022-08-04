@@ -4,6 +4,10 @@ library(ablandscapes)
 library(tidyverse)
 library(meantiter)
 library(r3js)
+library(patchwork)
+library(htmlwidgets)
+library(png)
+library(webshot2)
 set.seed(100)
 
 source("./functions/landscape_functions.R")
@@ -61,29 +65,32 @@ sr_group_colors <- data.frame("Serum.group" = as.character(srGroups(map_orig)),
 
 
 # # load parameters
-# reactivity bias not removed
 fit_parameters_w_bias <- readRDS("./som/landscapes_other_sr_groups/map-OmicronI+II+III-thresholded-full-P1m1-bias-ba1_sr_groups.rds")
 
-# with reactivity bias removed
-landscape_parameters <- readRDS("./som/landscapes_other_sr_groups/map-OmicronI+II+III-thresholded-full-P1m1-bias_removed-ba1_sr_groups.rds")
+serum_groups <- c("2xVacc+BA.1", "3xVacc+BA.1", "B.1.617.2+BA.1", "D614G+BA.1", "B.1.1.7+BA.1", "Vacc+BA.1 reinf.")
 
-# plot breakthrough infections omicron
-plot_sr_group_lndscp_gmt(map, landscape_parameters, sr_groups =c("1xVacc+BA.1", "2xVacc+BA.1", "3xVacc+BA.1") , remove_buttons = F, adjust_reactivity_bias = F)
-
-# plot omicron reinfections
-plot_sr_group_lndscp_gmt(map, landscape_parameters, sr_groups =c("2xVacc+BA.1", "3xVacc+BA.1", "B.1.617.2+BA.1", "D614G+BA.1", "B.1.1.7+BA.1") , remove_buttons = T, adjust_reactivity_bias = F)
-
-plot_sr_group_lndscp_gmt(map, landscape_parameters, sr_groups =c("3xVacc+BA.1", "Vacc+BA.1 reinf.") , remove_buttons = T, adjust_reactivity_bias = F)
-
-# multi exposure, no need to adjust reactivity bias because it was adjusted already
-plot_sr_group_lndscp_gmt(map, landscape_parameters, names(sr_groups), remove_buttons = FALSE, adjust_reactivity_bias = F)
-
-for(sg in c("2xVacc+BA.1", "3xVacc+BA.1", "B.1.617.2+BA.1", "D614G+BA.1", "B.1.1.7+BA.1", "Vacc+BA.1 reinf.")) {
-  
+labels <- LETTERS[1:length(serum_groups)]
+names(labels) <- serum_groups
+plot_list <- list()
+for(sg in serum_groups) {
+ 
+  sglabel <- gsub("B.1.1.7", "alpha", sg)
+  sglabel <- gsub("B.1.617.2", "delta", sg)
+  sglabel <- gsub("BA.1", "BA.1 omicron", sg)
   
   if(dim(landscape_parameters[[sg]]$sr_cone_coords)[1]>0) {
-    show(plot_sr_group_lndscp(map, fit_parameters_w_bias[[sg]]$log_titers, fit_parameters_w_bias[[sg]]$sr_cone_coords, fit_parameters_w_bias[[sg]]$colbases, fit_parameters_w_bias[[sg]]$slope, sg,
-                              remove_buttons = TRUE, adjust_reactivity_bias = F))
+    idvl_scape <- plot_sr_group_lndscp(map, fit_parameters_w_bias[[sg]]$log_titers, fit_parameters_w_bias[[sg]]$sr_cone_coords, fit_parameters_w_bias[[sg]]$colbases, fit_parameters_w_bias[[sg]]$slope, sg,
+                                       remove_buttons = TRUE, adjust_reactivity_bias = F)
+    idvl_temp <- plot_single_landscape_panel(idvl_scape, label = labels[sg], label_x_pos = 0, label_y_pos = 9.5,
+                                             label_size = 18,
+                                             sr_group_label = sglabel, sr_group_size = 8, sr_group_y_pos = 0.5,
+                                             show_border = TRUE)
+    
+    plot_list <- c(plot_list, list(idvl_temp))
   }
 }
 
+
+wrap_plots(plot_list, ncol = 3) -> idvl_scapes
+
+ggsave("./som/landscapes_other_sr_groups/ba1_landscapes_panel.png", idvl_scapes, width = 15, height = 10, dpi = 300)

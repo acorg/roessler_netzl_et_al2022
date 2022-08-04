@@ -18,6 +18,7 @@ makeMap <- function(table, baseMap = NULL, dimensions = 2,
   srNames(m) <- colnames(table)
   
   if(!(is.null(baseMap))) {
+    print("in here")
     m <- applyPlotspec(m, baseMap)
     m <- realignMap(m, baseMap)
   }

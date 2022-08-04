@@ -4,6 +4,11 @@ library(ablandscapes)
 library(tidyverse)
 library(meantiter)
 library(r3js)
+library(htmlwidgets)
+library(webshot2)
+library(png)
+library(grid)
+library(gridExtra)
 set.seed(100)
 
 source("./functions/landscape_functions.R")
@@ -56,7 +61,7 @@ sr_group_colors <- data.frame("Serum.group" = as.character(srGroups(map_orig)),
 # with reactivity bias removed
 landscape_parameters <- readRDS("./som/landscapes_other_sr_groups/map-OmicronI+II+III-thresholded-full-P1m1-bias_removed-ba2_sr_groups.rds")
 
-#a dd ba.2 conv to landscape parameters
+#add ba.2 conv to landscape parameters
 # plot breakthrough infections omicron
 sr_coords_ba2<- srCoords(map)[grepl("BA.2 conv.", rownames(srCoords(map))),]
 sr_coords_ba2 <- sr_coords_ba2[!(is.na(sr_coords_ba2[,1])),]
@@ -66,16 +71,8 @@ landscape_parameters[["BA.2 conv."]]$log_titers <- adjustedLogTiterTable(map)[,s
 landscape_parameters[["BA.2 conv."]]$colbases <- colBases(map)[srNames(map) %in% sr_names]
 landscape_parameters[["BA.2 conv."]]$sr_cone_coords <- sr_coords_ba2
 
-plot_sr_group_lndscp_gmt(map, landscape_parameters, sr_groups =c(sr_groups_of_interest, "BA.2 conv.") , remove_buttons = T, adjust_reactivity_bias = F)
-
-
-for(sg in c(sr_groups_of_interest, "BA.2 conv.")) {
-  
-  
-  if(dim(landscape_parameters[[sg]]$sr_cone_coords)[1]>0) {
-    show(plot_sr_group_lndscp(map, fit_parameters_w_bias[[sg]]$log_titers, fit_parameters_w_bias[[sg]]$sr_cone_coords, fit_parameters_w_bias[[sg]]$colbases, fit_parameters_w_bias[[sg]]$slope, sg,
-                              remove_buttons = TRUE, adjust_reactivity_bias = FALSE))
-  }
-}
+plot <- plot_sr_group_lndscp_gmt(map, landscape_parameters, sr_groups =c(sr_groups_of_interest, "BA.2 conv.") , remove_buttons = T, adjust_reactivity_bias = F)
+gmts_single_plot <- plot_single_landscape_panel(plot, label = "", label_x_pos = 1, label_y_pos = 0)
+ggsave("./som/landscapes_other_sr_groups/ba2_landscapes_cross_reactive_sr.png", gmts_single_plot, width = 4, height = 4, dpi = 300)
 
 

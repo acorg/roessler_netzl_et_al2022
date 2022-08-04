@@ -1,23 +1,23 @@
 library(Racmacs)
 set.seed(100)
-neut <- read.acmap('data/maps/map-OmicronI+II+III-thresholded-single_exposure-P1m1.ace')
+neut <- read.acmap('revision/GMT_map/gmt_map_LOD2.ace')
 
 xlim_no_zoom <- read.csv("./data/metadata/xlim_no_zoom.csv")$x
-ylim_no_zoom <- read.csv("./data/metadata/ylim_no_zoom.csv")$x-1
+ylim_no_zoom <- read.csv("./data/metadata/ylim_no_zoom.csv")$x
 
 labels <- data.frame(
   row.names = c('mRNA1273/mRNA1273', 'AZ/AZ', 'AZ/BNT', 'BNT/BNT',"WT conv.", 'alpha/alpha+E484K conv.', 'beta conv.', 'delta conv.', 'BA.1 conv.', 'BA.2 conv.'),
-  val = c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J')
+  val = LETTERS[c(1:length(unique(srGroups(neut))))]
 )
 
 
-png("som/bootstrapping/bootstrapping-sera.png", width = 10, height = 6, units = 'in', res=300, pointsize = 18)
+png("revision/bootstrapping_gmt_map/bootstrapping-sera.png", width = 10, height = 6, units = 'in', res=300, pointsize = 18)
 layout(matrix(c(1:12), ncol = 4, byrow = T))
 par(oma=c(0, 0, 0, 0), mar=c(0.1, 0, 1, 0))
 
 for(srGroup in c('mRNA1273/mRNA1273', 'AZ/AZ', 'AZ/BNT', 'BNT/BNT',"WT conv.", 'alpha/alpha+E484K conv.', 'beta conv.', 'delta conv.', 'BA.1 conv.', 'BA.2 conv.')){
-  
-  print(srGroup)
+    
+    print(srGroup)
   
   newMap <- removeSera(neut, srNames(neut)[srGroups(neut) == srGroup])
   newMap <- optimizeMap(
@@ -34,7 +34,7 @@ for(srGroup in c('mRNA1273/mRNA1273', 'AZ/AZ', 'AZ/BNT', 'BNT/BNT',"WT conv.", '
   if(srGroup == "AZ/BNT"){
     save_text <- "AZ_BNT"
   }
-  save.acmap(map = newMap, filename = paste0("./som/bootstrapping/wo_",save_text,".ace"))
+  save.acmap(map = newMap, filename = paste0("revision/bootstrapping_gmt_map/wo_",save_text,".ace"))
   srOutlineWidth(newMap) <- 1
   
   p <- procrustesMap(newMap, neut, sera = FALSE)
@@ -64,7 +64,7 @@ dev.off()
 
 
 # when maps already exist
-png("som/bootstrapping/bootstrapping-sera.png", width = 10, height = 6, units = 'in', res=300, pointsize = 18)
+png("revision/bootstrapping_gmt_map/bootstrapping-sera.png", width = 10, height = 6, units = 'in', res=300, pointsize = 18)
 layout(matrix(c(1:12), ncol = 4, byrow = T))
 par(oma=c(0, 0, 0, 0), mar=c(0.1, 0, 1, 0))
 
@@ -75,7 +75,7 @@ for(srGroup in c('mRNA1273/mRNA1273', 'AZ/AZ', 'AZ/BNT', 'BNT/BNT',"WT conv.", '
   if(srGroup == "AZ/BNT"){
     save_text <- "AZ_BNT"
   }
-  newMap <- read.acmap(paste0("./som/bootstrapping/wo_",save_text,".ace"))
+  newMap <- read.acmap(paste0("revision/bootstrapping_gmt_map/wo_",save_text,".ace"))
   srOutlineWidth(newMap) <- 1
   
   p <- procrustesMap(newMap, neut, sera = FALSE)
@@ -92,7 +92,7 @@ for(srGroup in c('mRNA1273/mRNA1273', 'AZ/AZ', 'AZ/BNT', 'BNT/BNT',"WT conv.", '
   } else if (title_text == "alpha/alpha+E484K conv.") {
     title_text <- "alpha conv."
   } else if(title_text == "BA.5 conv."){
-    title_text <- "BA.5 omicron conv"
+    title_text <- "BA.5 omicron conv."
   }
   
   plot(p, xlim = xlim_no_zoom, ylim = ylim_no_zoom, fill.alpha = 0.9, plot_labels = FALSE, outline.alpha = 0.9,

@@ -10,7 +10,7 @@ plot_ylim <-  read.csv("./data/metadata/ylim_zoom.csv")$x
 
 # Set viewing angles
 angle <- list(
-  rotation = c(-1.437, 0, -0.5350),# rotation = c(-1.4370, 0.0062, -0.5350),
+  rotation = c(-1.377, 0, -0.1350),# rotation = c(-1.4370, 0.0062, -0.5350),
   translation = c(0, 0.05,0.1), #translation = c(0.0344, 0.0459, 0.1175),
   #zoom = 1.4342
   zoom = 1.2646
@@ -805,7 +805,7 @@ plot_gmt_lndscps_from_map <- function(map, sr_groups = unique(srGroups(map)), re
   sr_group <- sr_groups[1]
   # Set sera group
   sr_group_color <- unique(srOutline(map)[srGroups(map) == sr_group])
-  sr_group_logtiters <- logtiterTable(map)[ ,srGroups(map) == sr_group]
+  sr_group_logtiters <- adjustedLogTiterTable(map)[ ,srGroups(map) == sr_group]
   
   sr_group_colbases <- colBases(map)[srGroups(map) == sr_group]
   
@@ -909,7 +909,7 @@ plot_gmt_lndscps_from_map <- function(map, sr_groups = unique(srGroups(map)), re
     
     # Set sera group
     sr_group_color <- unique(srOutline(map)[srGroups(map) == sr_group])
-    sr_group_logtiters <- logtiterTable(map)[ ,srGroups(map) == sr_group]
+    sr_group_logtiters <- adjustedLogTiterTable(map)[ ,srGroups(map) == sr_group]
     
     sr_group_colbases <- colBases(map)[srGroups(map) == sr_group]
     
@@ -1044,3 +1044,37 @@ plot_gmt_lndscps_from_map <- function(map, sr_groups = unique(srGroups(map)), re
 }
 
 
+
+plot_single_landscape_panel <- function(landscape, label, label_size = 10, label_x_pos = 2, label_y_pos = 9,
+                                        sr_group_label = "", sr_group_y_pos = 0, sr_group_size = 3, show_border = FALSE){
+  
+  
+  to_save <- file.path("temp.html")
+  png_save <- gsub(".html", ".png", to_save)
+  saveWidget(landscape, to_save, selfcontained = FALSE)
+  webshot(url=to_save,file = png_save)
+  temp_plot <- readPNG(png_save)
+  
+  qplot(c(1:10),c(1:10), geom="blank") +
+    annotation_custom(rasterGrob(temp_plot, height = unit(1, "npc")), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+    annotate(geom="text", x=label_x_pos, y=label_y_pos, label=label,size= label_size, hjust = 0) + 
+    annotate(geom="text", x=label_x_pos, y=sr_group_y_pos, label=sr_group_label,size= sr_group_size, hjust = 0) +
+    theme_void() -> p
+
+  if(show_border) {
+    p + theme(panel.border = element_rect(color = "grey50",
+                                      fill = NA,
+                                      size = 0.5))-> p
+  }
+  
+  if (file.exists(to_save)) {
+    #Delete file if it exists
+    file.remove(to_save)
+  }
+  if (file.exists(png_save)) {
+    #Delete file if it exists
+    file.remove(png_save)
+  }
+  
+ return(p) 
+}

@@ -35,11 +35,6 @@ ggplot(data=df, aes(x=dimensions, y=rmse)) +
   ylab('Mean RMSE of detectable titers') +
   theme(strip.background = element_blank()) ->dp
 
-pdf("./som/dimensionality_test/dimension_test.pdf", 3, 3)
-par(mar = rep(0.5, 4))
-dp
-dev.off()
-
 png("./som/dimensionality_test/dimension_test.png", 3, 3, units = 'in', res=300, pointsize = 12)
 par(mar = rep(0.5, 4))
 dp
@@ -57,7 +52,6 @@ map3D <- optimizeMap(
 map3D <- applyPlotspec(map3D, map)
 map3D <- realignMap(map3D, map)
 
-Racmacs::view(map3D)
 p <- procrustesMap(map3D, map, sera=FALSE)
 agSize(p) <- 6
 srSize(p) <- 4

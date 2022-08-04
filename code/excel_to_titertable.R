@@ -89,7 +89,7 @@ kimpel1 <- kimpel1 %>%
 # pivot wider to titer table
 kimpel1 %>%
   column_to_rownames("sr_info_complete") %>%
-  select(c("D614G", "B.1.1.7", "B.1.1.7+E484K", "P.1.1", "B.1.351", "B.1.617.2", "BA.1", "BA.2")) -> kimpel1_table
+  select(c("D614G", "B.1.1.7", "B.1.1.7+E484K", "P.1.1", "B.1.351", "B.1.617.2", "BA.1", "BA.2", "BA.5")) -> kimpel1_table
 
 #======================================  Omicron sheet II 
 
@@ -151,13 +151,13 @@ kimpel <- kimpel %>%
 # pivot wider to titer table
 kimpel %>%
   column_to_rownames("sr_info_complete") %>%
-  select(c("D614G", "B.1.1.7", "B.1.1.7+E484K", "P.1.1", "B.1.351", "B.1.617.2", "BA.1", "BA.2")) -> kimpel2_table
+  select(c("D614G", "B.1.1.7", "B.1.1.7+E484K", "P.1.1", "B.1.351", "B.1.617.2", "BA.1", "BA.2", "BA.5")) -> kimpel2_table
 
 #======================================  3rd Omicron table
 
 kimpel <- readxl::read_excel("./data/titer_data/220308_further data for Omicron III_raw data.xlsx", sheet = 1)
 colnames(kimpel) <- kimpel[2,]
-kimpel <- kimpel[c(3:64),]
+kimpel <- kimpel[c(3:77),]
 
 # fill the cohort rows
 no_na_cohort <- c(which(!is.na(kimpel$Cohort)), nrow(kimpel)+1)
@@ -173,6 +173,8 @@ kimpel <- kimpel %>%
       3
     } else if(x == "-") {
       0
+    } else if(x == "?"){
+      NA
     } else {
       length(str_split(x, "/")[[1]])
     }
@@ -195,7 +197,17 @@ kimpel <- kimpel %>%
     } else if(kimpel[[x, "Cohort"]] == "BA.1 convalescent") {
       temp <- "Vacc/Vacc/Vacc+BA.1"
       
-    } else {
+    } else if(kimpel[[x, "Cohort"]] == "naive + 3x vaccinated"){
+      temp <- kimpel[[x, "Vaccination"]]
+    } else if(kimpel[[x, "Cohort"]] == "BA.5 convalescent"){
+      if(kimpel[[x, "Immune status"]] == "vacc + BA.5") {
+        temp <- "Vacc+BA.5"
+      } else if(kimpel[[x, "Immune status"]] == "unvaccinated"){
+        temp <- "BA.5 conv."
+      } else {
+        temp <- "BA.2+BA.5 reinf."
+      }
+    } else { # this here for Vaccinated idvls with non-omicron breakthrough
       temp <- paste0(kimpel[[x, "Vaccination"]], "+", kimpel[[x, "Variant of prior infection"]])
       temp <- gsub(" \\?", "", temp)
       
@@ -217,7 +229,17 @@ kimpel <- kimpel %>%
       "WT conv."
     } else if(kimpel[[x, "Cohort"]] == "BA.1 convalescent") {
       temp <- "Vacc+BA.1"
-    }else {
+    } else if(kimpel[[x, "Cohort"]] == "naive + 3x vaccinated"){
+      temp <- kimpel[[x, "Vaccination"]]
+    } else if(kimpel[[x, "Cohort"]] == "BA.5 convalescent"){
+      if(kimpel[[x, "Immune status"]] == "vacc + BA.5") {
+        temp <- "Vacc+BA.5"
+      } else if(kimpel[[x, "Immune status"]] == "unvaccinated"){
+        temp <- "BA.5 conv."
+      } else {
+        temp <- "BA.2+BA.5 reinf."
+      }
+    } else {
       temp <- paste0(kimpel[[x, "Vaccination"]], "+", kimpel[[x, "Variant of prior infection"]])
       gsub(" \\?", "", temp)
     }
@@ -230,16 +252,19 @@ kimpel <- kimpel %>%
 # pivot wider to titer table
 kimpel %>%
   column_to_rownames("sr_info_complete") %>%
-  select(c("D614G", "B.1.1.7","B.1.1.7+E484K", "P.1.1", "B.1.351", "B.1.617.2", "BA.1", "BA.2")) -> kimpel3_table
+  select(c("D614G", "B.1.1.7","B.1.1.7+E484K", "P.1.1", "B.1.351", "B.1.617.2", "BA.1", "BA.2", "BA.5")) -> kimpel3_table
 
 # combine the three tables
 kimpel_table <- rbind(kimpel1_table, kimpel2_table, kimpel3_table)
 kimpel_table_wide <- t(kimpel_table)
-
 # set not titrated to "*"
 kimpel_table_wide[kimpel_table_wide == "-"] <- "*"
 
 # add lower threshold at the end
 kimpel_table_wide <- set_threshold(kimpel_table_wide, 16)
 
+# remove BA.5 samples from titer table 
+kimpel_table_wide <- kimpel_table_wide[, !(grepl("G786|G787|G788|G789|G790|G791", colnames(kimpel_table_wide)))]
+
 write.csv(kimpel_table_wide, "./data/titer_data/titer_table.csv")
+

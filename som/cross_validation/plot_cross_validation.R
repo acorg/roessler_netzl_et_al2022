@@ -32,37 +32,17 @@ hist_diff <- ggplot(detectable_results) +
   labs(x= "Measured - predicted log2 titers", y = "Count", title = paste0("Mean = ", mean, "; SD = ", sd)) +
   theme_bw()
 
-do_hist_single_sr_group <- function(data, sr_group_spec, color) {
-  
-  data %>%
-    filter(sr_group == sr_group_spec) -> data_sub
-  
-  mean <- round(mean(data_sub$residual, na.rm = T),2)
-  sd <- round(sd(scale(data_sub$residual, scale = F), na.rm = T), 2)
-  
-  data_sub %>%
-    ggplot() +
-    geom_histogram(aes(x = residual), fill = color, alpha = 0.8, bins = 100) +
-    geom_vline(xintercept = mean, linetype = "dashed") +
-    xlim(c(0, 300)) +
-    ylim(c(0, 3000)) +
-    labs(x= "Measured - predicted log2 titers", y = "Count", title = paste0("Mean = ", mean, "; SD = ", sd)) +
-    theme_bw() -> plot
-  
-  return(plot)
-}
-
 ggsave(plot = hist_diff, filename = "./som/cross_validation/histogram_residuals.png", width = 5, height = 4, dpi = 300)
 
 
 ag_pretty <- data.frame(
-  row.names = c("D614G", "B.1.1.7", "B.1.1.7+E484K", "P.1.1", "B.1.351", "B.1.617.2", "BA.1", "BA.2"),
-  val = c('D614G', 'alpha', 'alpha + E484K', 'gamma', 'beta', 'delta', 'BA.1 omicron', 'BA.2 omicron')
+  row.names = c("D614G", "B.1.1.7", "B.1.1.7+E484K", "P.1.1", "B.1.351", "B.1.617.2", "BA.1", "BA.2", "BA.5"),
+  val = c('D614G', 'alpha', 'alpha + E484K', 'gamma', 'beta', 'delta', 'BA.1 omicron', 'BA.2 omicron', 'BA.5 omicron')
 )
 
 sr_pretty <- data.frame(
   row.names = c('mRNA1273/mRNA1273', 'AZ/AZ', 'AZ/BNT', 'BNT/BNT',"WT conv.", 'alpha/alpha+E484K conv.', 'beta conv.', 'delta conv.', 'BA.1 conv.', 'BA.2 conv.'),
-  val = c('mRNA-1273/mRNA-1273', 'AZ/AZ', 'AZ/BNT', 'BNT/BNT',"First wave conv.", 'alpha conv.', 'beta conv.', 'delta conv.', 'BA.1 omicron conv.', 'BA.2 omicron conv.')
+  val = c('mRNA-1273/mRNA-1273', 'AZ/AZ', 'AZ/BNT', 'BNT/BNT',"First wave conv.", 'alpha conv.', 'beta conv.', 'delta conv.', 'BA.1 conv.', 'BA.2 conv.')
 )
 
 detectable_results$ag_pretty <- factor(ag_pretty[as.character(detectable_results$ag_name),], levels = ag_pretty$val)

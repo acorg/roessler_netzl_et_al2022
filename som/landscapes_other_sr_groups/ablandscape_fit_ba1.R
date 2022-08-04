@@ -9,10 +9,10 @@ source("./functions/remove_reactivity_bias.R")
 
 # function to fit slope and serum coordinates for multi exposure landscapes
 fit_cone_all_sera <- function(
-  pars,
-  ag_coords,
-  log_titers,
-  colbase
+    pars,
+    ag_coords,
+    log_titers,
+    colbase
 ) {
   
   if(length(colbase)>1) {
@@ -37,6 +37,7 @@ map <- read.acmap("./data/maps/map-OmicronI+II+III-thresholded-single_exposure-P
 
 # read the full map
 map_orig <- read.acmap(paste0("./data/maps/map-OmicronI+II+III-thresholded-full-P1m1.ace"))
+srNames(map_orig)[srGroups(map_orig) == "Vacc+BA.1"]
 
 # split srGroups of multiple infections to see how similar they are and if different groupings would make sense
 sr_levels <- levels(srGroups(map_orig))

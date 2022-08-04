@@ -31,6 +31,30 @@ fit_cone_all_sera <- function(
   
 }
 
+# function to fit slope and serum coordinates for multi exposure landscapes
+fit_slope_all_sera <- function(
+  pars,
+  sr_coords,
+  ag_coords,
+  log_titers,
+  colbase
+) {
+  
+  if(length(colbase)>1) {
+    pred_titers_all <- unlist(lapply(1:length(colbase), function(ser) {
+      coords <- c(sr_coords[x,1], sr_coords[x,2])
+      ag_distances <- as.matrix(dist(rbind(coords, ag_coords)))[1, -1]
+      predicted_logtiters <- colbase[ser] - ag_distances*pars["slope"]
+      return(predicted_logtiters)
+    }))
+  } else {
+    coords <- c(sr_coords[1], sr_coords[2])
+    ag_distances <- as.matrix(dist(rbind(coords, ag_coords)))[1, -1]
+    pred_titers_all <- colbase - ag_distances*pars["slope"]
+  }
+  sum((log_titers - pred_titers_all)^2, na.rm = T)
+  
+}
 
 
 # Read the base map
@@ -39,7 +63,7 @@ map <- read.acmap("./data/maps/map-OmicronI+II+III-thresholded-single_exposure-P
 # read the full map
 map_orig <- read.acmap(paste0("./data/maps/map-OmicronI+II+III-thresholded-full-P1m1.ace"))
 
-single_exposure_sr_groups <- c("delta conv.", "alpha/alpha+E484K conv.","beta conv.","mRNA1273/mRNA1273","AZ/AZ","AZ/BNT","BNT/BNT","BA.1 conv." ,"BA.2 conv.","WT conv.")
+single_exposure_sr_groups <- c("delta conv.", "alpha/alpha+E484K conv.","beta conv.","mRNA1273/mRNA1273","AZ/AZ","AZ/BNT","BNT/BNT","BA.1 conv." ,"BA.2 conv.","BA.5 conv.", "WT conv.")
 
 single_exposure_sr <- srNames(map_orig)[as.character(srGroups(map_orig)) %in% single_exposure_sr_groups]
 
@@ -134,3 +158,4 @@ names(fit_results) <- as.character(unique(srGroups(map_vax)))
 
 saveRDS(fit_results, "./data/landscape_fit/map-OmicronI+II+III-thresholded-full-P1m1-bias-no_1xVax+BA1.rds")
 saveRDS(fit_results_no_bias, "./data/landscape_fit/map-OmicronI+II+III-thresholded-full-P1m1-bias_removed-no_1xVax+BA1.rds")
+

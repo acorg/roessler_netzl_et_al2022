@@ -18,7 +18,6 @@ mapColors["P.1.1", "Color"] <- mapColors["P.1", "Color"]
 
 # load titer table
 titer_table <- read.titerTable("./data/titer_data/titer_table.csv")
-
 # ------------------------------------------ FULL MAP --------------------------------------
 map <- makeMap(titer_table, nOptimisations = 1000, dilution_stepsize = 0, options = list(ignore_disconnected = TRUE))
 
@@ -30,16 +29,12 @@ srGroups(map) <- factor(sr_groups, levels = srGroup_colors$SerumGroup)
 srOutline(map) <- mapColors[as.character(srGroups(map)),]
 
 map <- apply_style(map)
-# set map orientation
-map_orientation <- matrix(c(-0.960712, 0.277549, 0.277549, 0.960712), nrow = 2, ncol = 2, byrow = T)
-
-mapTransformation(map) <- map_orientation
 
 save.acmap(map, "./data/maps/map-OmicronI+II+III-thresholded-full.ace")
 
 ##------------------------------- SINGLE EXPOSURE MAP ----------------------------------------
 map <- read.acmap("./data/maps/map-OmicronI+II+III-thresholded-full.ace")
-single_exposure_sr_groups <- c("delta conv.", "alpha/alpha+E484K conv.","beta conv.","mRNA1273/mRNA1273","AZ/AZ","AZ/BNT","BNT/BNT","BA.1 conv." ,"BA.2 conv.","WT conv.")
+single_exposure_sr_groups <- c("delta conv.", "alpha/alpha+E484K conv.","beta conv.","mRNA1273/mRNA1273","AZ/AZ","AZ/BNT","BNT/BNT","BA.1 conv." ,"BA.2 conv.","BA.5 conv.","WT conv.")
 
 single_exposure_sr <- srNames(map)[as.character(srGroups(map)) %in% single_exposure_sr_groups]
 
@@ -47,9 +42,9 @@ map_single <- subsetMap(map, sera = single_exposure_sr)
 
 map_single <- optimizeMap(map_single, number_of_dimensions = 2, number_of_optimizations = 1000, 
                           options =  list(ignore_disconnected = TRUE))
+# set map orientation
+map_orientation <- matrix(c(0.967046, 0.254601, 0.254601, -0.967046), nrow = 2, ncol = 2, byrow = T)
+mapTransformation(map_single) <- map_orientation
 
-map_single <- realignMap(map_single, map)
 
 save.acmap(map_single, "./data/maps/map-OmicronI+II+III-thresholded-single_exposure.ace")
-
-
