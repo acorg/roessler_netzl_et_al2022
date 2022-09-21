@@ -43,7 +43,7 @@ for(srGroup in c('mRNA1273/mRNA1273', 'AZ/AZ', 'AZ/BNT', 'BNT/BNT',"WT conv.", '
   if(title_text == "mRNA1273/mRNA1273") {
     title_text <- "mRNA-1273/mRNA-1273"
   } else if (title_text == "WT conv.") {
-    title_text <- "first wave conv."
+    title_text <- "Ancestral virus conv."
   } else if (title_text == "BA.1 conv.") {
     title_text <- "BA.1 omicron conv."
   } else if (title_text == "BA.2 conv.") {
@@ -84,7 +84,7 @@ for(srGroup in c('mRNA1273/mRNA1273', 'AZ/AZ', 'AZ/BNT', 'BNT/BNT',"WT conv.", '
   if(title_text == "mRNA1273/mRNA1273") {
     title_text <- "mRNA-1273/mRNA-1273"
   } else if (title_text == "WT conv.") {
-    title_text <- "first wave conv."
+    title_text <- "Ancestral virus conv."
   } else if (title_text == "BA.1 conv.") {
     title_text <- "BA.1 omicron conv."
   } else if (title_text == "BA.2 conv.") {

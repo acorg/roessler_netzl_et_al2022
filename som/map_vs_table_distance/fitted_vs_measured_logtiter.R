@@ -48,7 +48,7 @@ plot_map_vs_table_titers <- function(map) {
   if(unique(as.character(srGroups(map))) == "mRNA1273/mRNA1273") {
     sr <- "mRNA-1273/mRNA-1273"
   }else if(unique(as.character(srGroups(map))) == "WT conv."){
-    sr <- "First wave conv."
+    sr <- "Ancestral virus conv."
   }else if(unique(as.character(srGroups(map))) == "BA.1 conv."){
     sr <- "BA.1 omicron conv."
   }else if(unique(as.character(srGroups(map))) == "BA.2 conv."){

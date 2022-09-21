@@ -128,7 +128,7 @@ for(sg in c("WT conv.", "alpha/alpha+E484K conv.", "beta conv.","delta conv.", "
                                             "AZ/AZ", 'AZ/BNT', 'BNT/BNT', "mRNA1273/mRNA1273")) {
   
   sg_label <- sg
-  sg_label <- gsub("WT", "1st wave", sg_label)
+  sg_label <- gsub("WT", "Ancestral virus", sg_label)
   sg_label <- gsub("\\/alpha\\+E484K", "", sg_label)
   if(sg == "mRNA1273/mRNA1273"){
     sg_label <- "2xmRNA-1273"
@@ -157,7 +157,6 @@ for(sg in c("BA.1 reinf.", "BA.2 reinf.", "BNT/BNT/BNT","AZ/AZ+delta", "BNT/BNT+
                                             "Vacc+BA.1","Vacc+BA.2", "Vacc+BA.1 reinf.")) {
  
   sg_label <- sg
-  sg_label <- gsub("WT", "First wave", sg_label)
 
   if(dim(landscape_parameters[[sg]]$sr_cone_coords)[1]>0) {
     idvl_scape <- plot_sr_group_lndscp(map, landscape_parameters[[sg]]$log_titers, landscape_parameters[[sg]]$sr_cone_coords, landscape_parameters[[sg]]$colbases, landscape_parameters[[sg]]$slope, sg,

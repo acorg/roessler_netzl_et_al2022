@@ -37,12 +37,12 @@ ggsave(plot = hist_diff, filename = "./som/cross_validation/histogram_residuals.
 
 ag_pretty <- data.frame(
   row.names = c("D614G", "B.1.1.7", "B.1.1.7+E484K", "P.1.1", "B.1.351", "B.1.617.2", "BA.1", "BA.2", "BA.5"),
-  val = c('D614G', 'alpha', 'alpha + E484K', 'gamma', 'beta', 'delta', 'BA.1 omicron', 'BA.2 omicron', 'BA.5 omicron')
+  val = c('D614G', 'alpha', 'alpha+E484K', 'gamma', 'beta', 'delta', 'BA.1 omicron', 'BA.2 omicron', 'BA.5 omicron')
 )
 
 sr_pretty <- data.frame(
   row.names = c('mRNA1273/mRNA1273', 'AZ/AZ', 'AZ/BNT', 'BNT/BNT',"WT conv.", 'alpha/alpha+E484K conv.', 'beta conv.', 'delta conv.', 'BA.1 conv.', 'BA.2 conv.'),
-  val = c('mRNA-1273/mRNA-1273', 'AZ/AZ', 'AZ/BNT', 'BNT/BNT',"First wave conv.", 'alpha conv.', 'beta conv.', 'delta conv.', 'BA.1 conv.', 'BA.2 conv.')
+  val = c('2xmRNA-1273', 'AZ/AZ', 'AZ/BNT', 'BNT/BNT',"Ancestral virus conv.", 'alpha conv.', 'beta conv.', 'delta conv.', 'BA.1 conv.', 'BA.2 conv.')
 )
 
 detectable_results$ag_pretty <- factor(ag_pretty[as.character(detectable_results$ag_name),], levels = ag_pretty$val)
