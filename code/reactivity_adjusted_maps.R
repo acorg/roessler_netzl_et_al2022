@@ -25,3 +25,6 @@ single_map_p1_adj <- realignMap(single_map_p1_adj, map_single)
 
 save.acmap(single_map_p1_adj, "./data/maps/map-OmicronI+II+III-thresholded-single_exposure-P1m1.ace")
 
+# map residual mean error
+mean(mapResiduals(single_map_p1_adj), na.rm=T)
+
