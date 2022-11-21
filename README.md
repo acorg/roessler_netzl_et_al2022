@@ -1,6 +1,8 @@
 # roessler_netzl_et_al2022
 Code repository for "BA.2 and BA.5 omicron differ immunologically from both BA.1 omicron and pre-omicron variants" by Roessler, A., Netzl, A., et al. 2022
 
+If you use code or data from this repository, please cite the main publication and this repository: DOI: 10.5281/zenodo.7341691.
+
 The raw data for figure 1, 2 and S1 is in data/titer_data/221121_Raw data.xlsx.
 
 The raw titer data for making the maps is data/titer_data/ in the excel sheets 220309_Omicron I_raw data.xlsx, 220309_Omicron II_raw data.xlsx, 220308_further data for Omicron III_raw data.xlsx. Running the script code/excel_to_titertable.R will create the titer_table.csv in data/titer_data used for map creation. The script code/make_map.R creates the initial map, the code/reactivity_adjusted_maps.R creates the manuscript map with P.1.1 reactivity adjusted by -1 2-fold.
