@@ -157,7 +157,7 @@ kimpel %>%
 
 kimpel <- readxl::read_excel("./data/titer_data/220308_further data for Omicron III_raw data.xlsx", sheet = 1)
 colnames(kimpel) <- kimpel[2,]
-kimpel <- kimpel[c(3:77),]
+kimpel <- kimpel[c(3:71),]
 
 # fill the cohort rows
 no_na_cohort <- c(which(!is.na(kimpel$Cohort)), nrow(kimpel)+1)
@@ -262,9 +262,6 @@ kimpel_table_wide[kimpel_table_wide == "-"] <- "*"
 
 # add lower threshold at the end
 kimpel_table_wide <- set_threshold(kimpel_table_wide, 16)
-
-# remove BA.5 samples from titer table 
-kimpel_table_wide <- kimpel_table_wide[, !(grepl("G786|G787|G788|G789|G790|G791", colnames(kimpel_table_wide)))]
 
 write.csv(kimpel_table_wide, "./data/titer_data/titer_table.csv")
 
