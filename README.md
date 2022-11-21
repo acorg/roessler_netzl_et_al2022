@@ -1,5 +1,5 @@
 # roessler_netzl_et_al2022
-Code repository for "BA.2 omicron differs immunologically from both BA.1 omicron and pre-omicron variants" by Roessler, A., Netzl, A., et al. 2022
+Code repository for "BA.2 and BA.5 omicron differ immunologically from both BA.1 omicron and pre-omicron variants" by Roessler, A., Netzl, A., et al. 2022
 
 Titer data and maps will be made available upon request.
 
